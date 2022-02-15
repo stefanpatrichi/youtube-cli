@@ -2,10 +2,16 @@
 import click
 import urllib.request
 import re
-#from app import runApp
+import os
+
+class SearchQuery():
+    def __init__(self, resultlist):
+        self.results = resultlist
+
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
-def search(query):
+@click.pass_context
+def search(ctx, query):
     click.echo("Searching...")
     ret = []
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
@@ -33,17 +39,21 @@ def search(query):
     click.echo("")
     click.echo("Enter the number of the video you would like to select, or 0 to search again")
     click.echo("")
-    playvideo()
+    ret = '!#$'.join([video_ids[x] for x in range(5)])
+    query = click.prompt('Option')
+    ctx.invoke(playvideo, optionslist=ret, query=query)
 
 
 @click.command()
-@click.option('--query', '-q', help='Search query', prompt="Option")
-def playvideo(query):
+@click.argument('optionslist')
+@click.option('--query', '-q', help='Search query')
+def playvideo(optionslist, query):
+    optionslist = optionslist.split('!#$')
     query = int(query)
     if query == 0:
         search()
     else:
-        click.echo(query)
+        os.system(f"mpv https://www.youtube.com/watch?v={optionslist[query-1]}")
 
 
 if __name__ == '__main__':
