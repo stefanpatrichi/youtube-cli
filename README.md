@@ -12,7 +12,7 @@ Uses-
 
 ## Idea
 
-I originally intended to use the Youtube Data API, but considering that I required [than the api provided], I considered other options. I soon found this [article](https://codefather.tech/blog/youtube-search-python/) and adapted the code to allow for multiple search terms and return multiple video links and expanded the results for more functionality. Because I wanted to provide functionality for search within the command line, I searched the html code for returned videos and wrote regex to find the title and creator of the video (yes this is inefficient, but requires no api key).
+I originally intended to use the Youtube Data API, but considering that the idea required very little data from youtube, I considered other options. I soon found this [article](https://codefather.tech/blog/youtube-search-python/) and adapted the code to allow for multiple search terms and return multiple video links and expanded the results for more functionality. Because I wanted to provide functionality for search within the command line, I searched the html code for returned videos and wrote regex to find the title and creator of the video (yes this is inefficient, but requires no api key).
 
 ## Code
 
