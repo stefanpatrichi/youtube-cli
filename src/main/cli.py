@@ -4,10 +4,6 @@ import urllib.request
 import re
 import os
 
-class SearchQuery():
-    def __init__(self, resultlist):
-        self.results = resultlist
-
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
 @click.pass_context
