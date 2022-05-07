@@ -4,6 +4,9 @@ import urllib.request
 import re
 import os
 
+def remove_dupl(arr):
+    return list(dict.fromkeys(arr))
+
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
 @click.pass_context
@@ -11,7 +14,7 @@ def search(ctx, query):
     click.echo("Searching...")
     ret = []
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
-    video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+    video_ids = remove_dupl(re.findall(r"watch\?v=(\S{11})", html.read().decode()))
     for x in range(5):
         vidurl = f"https://www.youtube.com/watch?v={video_ids[x]}"
         video = urllib.request.urlopen(vidurl)
