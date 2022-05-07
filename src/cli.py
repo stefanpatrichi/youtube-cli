@@ -9,8 +9,8 @@ def remove_dupl(arr):
 
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
-@click.pass_context
-def search(ctx, query):
+@click.option('--load-video', '-lv', help='Load video (1) or not (0)')
+def search(query, load_video):
     click.echo("Searching...")
     ret = []
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
@@ -40,19 +40,18 @@ def search(ctx, query):
     click.echo("")
     ret = '!#$'.join([video_ids[x] for x in range(5)])
     query = click.prompt('Option')
-    ctx.invoke(playvideo, optionslist=ret, query=query)
+    load_video = "--no-video" if load_video == "0" else ""
+    playvideo(ret, query, load_video)
 
 
-@click.command()
-@click.argument('optionslist')
-@click.option('--query', '-q', help='Search query')
-def playvideo(optionslist, query):
+def playvideo(optionslist, query, load_video):
     optionslist = optionslist.split('!#$')
     query = int(query)
+
     if query == 0:
         search()
     else:
-        os.system(f"mpv https://www.youtube.com/watch?v={optionslist[query-1]}")
+        os.system(f"mpv {load_video} https://www.youtube.com/watch?v={optionslist[query-1]}")
 
 
 if __name__ == '__main__':
