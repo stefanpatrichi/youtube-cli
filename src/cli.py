@@ -3,9 +3,24 @@ import click
 import urllib.request
 import re
 import os
+import sys
 
 def remove_dupl(arr):
     return list(dict.fromkeys(arr))
+
+def parse_to_int(x, lower_bound=1, upper_bound=sys.maxsize):  
+    err_msg = f"Please enter an integer between {lower_bound} and {upper_bound}"
+
+    try:
+        x = int(x)
+        if x < lower_bound or x > upper_bound:
+            print(err_msg)
+            sys.exit(1)
+    except ValueError:
+        print(err_msg)
+        sys.exit(1)
+
+    return x
 
 def cap(x, upper_bound):
     if x > upper_bound:
@@ -34,7 +49,7 @@ def search(query, load_video, num_videos):
     if num_videos is None:
         num_videos = 5
     else:
-        num_videos = int(num_videos)
+        num_videos = parse_to_int(num_videos)
     num_videos = cap(num_videos, len(video_ids))
 
     video_ids = video_ids[:num_videos]  # keep first num_videos elements
@@ -64,7 +79,7 @@ def search(query, load_video, num_videos):
     click.echo("Enter the number of the video you would like to select, or 0 to search again")
     click.echo("")
 
-    query = int(click.prompt('Option')), len(video_ids)
+    query = parse_to_int(click.prompt('Option'), lower_bound=1, upper_bound=num_videos)
     load_video = "--no-video" if load_video == "0" else ""
     play_video(video_ids, query, load_video)
 
