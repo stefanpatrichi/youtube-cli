@@ -9,51 +9,27 @@ def remove_dupl(arr):
     return list(dict.fromkeys(arr))
 
 def parse_to_int(x, lower_bound=1, upper_bound=sys.maxsize):  
-    err_msg = f"Please enter an integer between {lower_bound} and {upper_bound}"
+    err_msg = f"Error: Option should be an integer between {lower_bound} and {upper_bound}"
 
     try:
         x = int(x)
         if x < lower_bound or x > upper_bound:
-            print(err_msg)
+            click.echo(err_msg)
             sys.exit(1)
     except ValueError:
-        print(err_msg)
+        click.echo(err_msg)
         sys.exit(1)
 
     return x
 
 def cap(x, upper_bound):
     if x > upper_bound:
-        print(f"Found only {upper_bound} videos (not {x} or more as expected).")
         x = upper_bound
 
     return x
 
-def play_video(optionslist, query, load_video):
-    if query == 0:
-        search()
-    else:
-        os.system(f"mpv {load_video} https://www.youtube.com/watch?v={optionslist[query - 1]}")
-
-@click.command()
-@click.option('--query', '-q', help='Search query', prompt="Search")
-@click.option('--load-video', '-lv', help='Load video (1) or not (0), by default 1')
-@click.option('--num-videos', '-nv', help='Number of results to print, by default 5')
-def search(query, load_video, num_videos):
-   
-    click.echo("Searching...")
+def print_options(video_ids):
     ret = []
-    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
-    video_ids = remove_dupl(re.findall(r"watch\?v=(\S{11})", html.read().decode()))  # remove duplicates 
-    
-    if num_videos is None:
-        num_videos = 5
-    else:
-        num_videos = parse_to_int(num_videos)
-    num_videos = cap(num_videos, len(video_ids))
-
-    video_ids = video_ids[:num_videos]  # keep first num_videos elements
-
     for video_id in video_ids:
         vidurl = f"https://www.youtube.com/watch?v={video_id}"
         video = urllib.request.urlopen(vidurl)
@@ -78,6 +54,38 @@ def search(query, load_video, num_videos):
     click.echo("")
     click.echo("Enter the number of the video you would like to select, or 0 to search again")
     click.echo("")
+
+def play_video(optionslist, query, load_video):
+    if query == 0:
+        search()
+    else:
+        os.system(f"mpv {load_video} https://www.youtube.com/watch?v={optionslist[query - 1]}")
+
+@click.command()
+@click.option('--query', '-q', help='Search query', prompt="Search")
+@click.option('--load-video', '-lv', help='Load video (1) or not (0), by default 1')
+@click.option('--option', '-o', help='(optional) Number of option to choose')
+@click.option('--num-videos', '-nv', help='Number of results to print, by default 5; do not use -o and -nv together!')
+def search(query, load_video, option, num_videos):
+    click.echo("Searching...")
+    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
+    video_ids = remove_dupl(re.findall(r"watch\?v=(\S{11})", html.read().decode()))  # remove duplicates 
+    click.echo(f"Found {len(video_ids)} videos.")
+   
+    if option is None:
+        if num_videos is None:
+            num_videos = 5    
+        else:
+            num_videos = parse_to_int(num_videos)
+        num_videos = cap(num_videos, len(video_ids))
+
+        video_ids = video_ids[:num_videos]  # keep first num_videos elements
+        print_options(video_ids)
+
+    else:
+        option = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
+        video_ids = [video_ids[option - 1]]
+
 
     query = parse_to_int(click.prompt('Option'), lower_bound=1, upper_bound=num_videos)
     load_video = "--no-video" if load_video == "0" else ""
