@@ -1,42 +1,34 @@
 # CLI Youtube Client
 
-## Intro
+This is a program to search and watch Youtube videos from the command line. While this works as described, I made this mostly to learn about CLIs with python and regex.
 
-This is a program to search and watch youtube from the command line. While this works as described, I made this mostly to learn about CLIs with python and regex.
+## Installation
+Requires [Python](https://www.python.org/downloads/) and [mpv](https://github.com/mpv-player/mpv).
 
-Uses-
+On your local machine, clone into this repository and install with `pip install -r requirement.txt`.
+If you have superuser privileges, you can add `src/cli.py` as a bash command:
 
-- Click
-- PyInstaller
-- MPV
+```console
+[foo@bar youtube-cli]$ sudo ln -s src/cli.py /usr/bin/youtube-cli
+[sudo] password for foo: 
+[foo@bar youtube-cli]$ sudo chmod +x /usr/bin/youtube-cli
+```
 
 ## Idea
-
-I originally intended to use the Youtube Data API, but considering that the idea required very little data from youtube, I considered other options. I soon found this [article](https://codefather.tech/blog/youtube-search-python/) and adapted the code to allow for multiple search terms and return multiple video links and expanded the results for more functionality. Because I wanted to provide functionality for search within the command line, I searched the html code for returned videos and wrote regex to find the title and creator of the video (yes this is inefficient, but requires no api key).
-
-## Code
-
-The code itself is relatively simple, and is built from one python file. As described above, the program takes in a search query and returns search results using regex on decoded source html from the videos. If the user chooses to select one, the selected video should open in a new window with [mpv](https://github.com/mpv-player/mpv).
+I originally intended to use the Youtube Data API, but considering that the idea required very little data from youtube, I considered other options. I soon found this [article](https://codefather.tech/blog/youtube-search-python/), adapted the code to allow for multiple search terms and video options and then expanded the results for more functionality. Because I wanted to provide functionality for searching within the command line, I searched the HTML code for the returned videos and wrote some RegEx to find the title and uploader of the video (yes, this is inefficient, but it requires no API key).
 
 ## Usage
 
-I have included an executable and .exe in /dist, which can be run with `cmdytc/cli.exe [ARGUMENTS]`
-
-Using --help, usage is described below:
-
-```
-Usage: cli.exe [OPTIONS]
+```console
+[foo@bar youtube-cli]$ youtube-cli --help    
+Usage: youtube-cli [OPTIONS]
 
 Options:
-  -q, --query TEXT  Search query
-  --help            Show this message and exit.
+  -q, --query TEXT        Search query
+  -lv, --load-video TEXT  Load video (1) or not (0), by default 1
+  -o, --option TEXT       (optional) Number of option to choose
+  -nv, --num-videos TEXT  Number of results to print, by default 5; do not use
+                          -o and -nv together!
+  --help                  Show this message and exit.
 ```
-
-To build it yourself- run the following:
-
-```
-pip install --editable .
-pyinstaller src/main/cli.py -F -n cmdytc
-```
-
-The executable should then be in /dist.
+(or `python src/cli.py --help` if you didn't follow the steps in Installation)
