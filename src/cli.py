@@ -85,6 +85,9 @@ def search(query, load_video, option, num_videos):
         query = parse_to_int(click.prompt('Option'), lower_bound=1, upper_bound=num_videos)
 
     else:
+        if num_videos is not None:
+            click.echo("Do not use -o and -nv together!")
+            sys.exit(1)
         query = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
         video_ids = [video_ids[query - 1]]
 
