@@ -71,7 +71,8 @@ def search(query, load_video, option, num_videos):
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + '+'.join(query.split()))
     video_ids = remove_dupl(re.findall(r"watch\?v=(\S{11})", html.read().decode()))  # remove duplicates 
     click.echo(f"Found {len(video_ids)} videos.")
-   
+
+    query = 0
     if option is None:
         if num_videos is None:
             num_videos = 5    
@@ -81,13 +82,13 @@ def search(query, load_video, option, num_videos):
 
         video_ids = video_ids[:num_videos]  # keep first num_videos elements
         print_options(video_ids)
+        query = parse_to_int(click.prompt('Option'), lower_bound=1, upper_bound=num_videos)
 
     else:
-        option = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
-        video_ids = [video_ids[option - 1]]
+        query = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
+        video_ids = [video_ids[query - 1]]
 
 
-    query = parse_to_int(click.prompt('Option'), lower_bound=1, upper_bound=num_videos)
     load_video = "--no-video" if load_video == "0" else ""
     play_video(video_ids, query, load_video)
 
