@@ -31,11 +31,11 @@ def cap(x, upper_bound):
 def print_options(video_ids):
     ret = []
     for video_id in video_ids:
-        vidurl = f"https://www.youtube.com/watch?v={video_id}"
-        video = urllib.request.urlopen(vidurl)
+        vid_url = f"https://www.youtube.com/watch?v={video_id}"
+        video = urllib.request.urlopen(vid_url)
         results = re.findall(r"<\/title><meta name=\"title\" content=\"(.+?(?=\"))|<link itemprop=\"name\" content=\"(.+?(?=\"))", video.read().decode())
         title, author = results[0][0].replace('&#39;', '').replace("amp;", ""), results[1][1].replace('&#39;', '').replace("amp;", "")
-        ret.append([title, author, vidurl])
+        ret.append([title, author, vid_url])
 
     click.echo("")
     click.echo("#). Title-------------------------------------Creator-----------------------")
@@ -55,13 +55,13 @@ def print_options(video_ids):
     click.echo("Enter the number of the video you would like to select, or 0 to search again")
     click.echo("")
 
-def play_video(optionslist, query, load_video):
+def play_video(options, query, load_video):
     if query == 0:
         search()
     else:
-        vidurl = f"https://www.youtube.com/watch?v={optionslist[query - 1]}"
-        click.echo(f"Playing {vidurl} ...\n")
-        os.system(f"mpv {load_video} {vidurl}")
+        vid_url = f"https://www.youtube.com/watch?v={options[query - 1]}"
+        click.echo(f"Playing {vid_url} ...\n")
+        os.system(f"mpv {load_video} {vid_url}")
 
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
