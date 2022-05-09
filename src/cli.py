@@ -59,7 +59,9 @@ def play_video(optionslist, query, load_video):
     if query == 0:
         search()
     else:
-        os.system(f"mpv {load_video} https://www.youtube.com/watch?v={optionslist[query - 1]}")
+        vidurl = f"https://www.youtube.com/watch?v={optionslist[query - 1]}"
+        click.echo(f"Playing {vidurl} ...\n")
+        os.system(f"mpv {load_video} {vidurl}")
 
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
@@ -91,7 +93,7 @@ def search(query, load_video, option, num_videos):
         query = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
         video_ids = [video_ids[query - 1]]
 
-
+    click.echo("")
     load_video = "--no-video" if load_video == "0" else ""
     play_video(video_ids, query, load_video)
 
