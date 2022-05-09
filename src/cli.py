@@ -4,6 +4,7 @@ import urllib.request
 import re
 import os
 import sys
+from tabulate import tabulate
 
 def remove_dupl(arr):
     return list(dict.fromkeys(arr))
@@ -30,27 +31,18 @@ def cap(x, upper_bound):
 
 def print_options(video_ids):
     ret = []
+    index = 0
     for video_id in video_ids:
         vid_url = f"https://www.youtube.com/watch?v={video_id}"
         video = urllib.request.urlopen(vid_url)
         results = re.findall(r"<\/title><meta name=\"title\" content=\"(.+?(?=\"))|<link itemprop=\"name\" content=\"(.+?(?=\"))", video.read().decode())
         title, author = results[0][0].replace('&#39;', '').replace("amp;", ""), results[1][1].replace('&#39;', '').replace("amp;", "")
-        ret.append([title, author, vid_url])
+        index += 1
+        ret.append([index, title, author])
 
-    click.echo("")
-    click.echo("#). Title-------------------------------------Creator-----------------------")
-    for y in range(len(ret)):
-        t, a = ret[y][0], ret[y][1]
-        tlen, alen = len(t), len(a)
+    head = ["#", "Title", "Creator"]
+    click.echo(tabulate(ret, headers=head, tablefmt="grid"))
 
-        if tlen > 40:
-            t = t[:39] + '  '
-        else:
-            t = t + (' ' * (41 - tlen))
-        if alen > 30:
-            a = a[:29]
-        outpstr = f"{y+1}). {t} {a}"
-        click.echo(outpstr)
     click.echo("")
     click.echo("Enter the number of the video you would like to select, or 0 to search again")
     click.echo("")
