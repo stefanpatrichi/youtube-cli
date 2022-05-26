@@ -44,16 +44,13 @@ def print_options(video_ids):
     click.echo(tabulate(ret, headers=head, tablefmt="grid"))
 
     click.echo("")
-    click.echo("Enter the number of the video you would like to select, or 0 to search again")
+    click.echo("Enter the number of the video you would like to select")
     click.echo("")
 
-def play_video(options, query, load_video):
-    if query == 0:
-        search()
-    else:
-        vid_url = f"https://www.youtube.com/watch?v={options[query - 1]}"
-        click.echo(f"Playing {vid_url} ...\n")
-        os.system(f"mpv {load_video} {vid_url}")
+def play_video(video_id, load_video):
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    click.echo(f"Playing {url} ...\n")
+    os.system(f"mpv {load_video} {url}")
 
 @click.command()
 @click.option('--query', '-q', help='Search query', prompt="Search")
@@ -67,6 +64,7 @@ def search(query, load_video, option, num_videos):
     click.echo(f"Found {len(video_ids)} videos.")
 
     query = 0
+    to_play = ""
     if option is None:
         if num_videos is None:
             num_videos = 5    
@@ -83,11 +81,12 @@ def search(query, load_video, option, num_videos):
             click.echo("Do not use -o and -nv together!")
             sys.exit(1)
         query = parse_to_int(option, lower_bound=1, upper_bound=len(video_ids))
-        video_ids = [video_ids[query - 1]]
 
     click.echo("")
+
+    to_play = video_ids[query - 1] 
     load_video = "--no-video" if load_video == "0" else ""
-    play_video(video_ids, query, load_video)
+    play_video(to_play, load_video)
 
 if __name__ == '__main__':
     search()
